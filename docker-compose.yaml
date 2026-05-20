@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL Database ──────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: lab6_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-labdb}
+      POSTGRES_USER: ${DB_USER:-labuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-labpass}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-labuser} -d ${DB_NAME:-labdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Flask Application ────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lab6_app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-5000}:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-labdb}
+      DB_USER: ${DB_USER:-labuser}
+      DB_PASSWORD: ${DB_PASSWORD:-labpass}
+      FLASK_ENV: ${FLASK_ENV:-production}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Test Runner (manual / CI) ────────────────────────────────────────────
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: lab6_tests
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-labdb}
+      DB_USER: ${DB_USER:-labuser}
+      DB_PASSWORD: ${DB_PASSWORD:-labpass}
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - test   # run only with: docker compose --profile test up tests
+
+volumes:
+  pgdata:
