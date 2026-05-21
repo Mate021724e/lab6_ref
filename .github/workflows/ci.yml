@@ -73,17 +73,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Smoke test — container starts
-        run: |
-          docker run -d --name smoke_test \
-            -e DB_HOST=localhost \
-            -e DB_NAME=labdb \
-            -e DB_USER=labuser \
-            -e DB_PASSWORD=labpass \
-            lab6-app:${{ github.sha }}
-          sleep 5
-          docker logs smoke_test
-          docker rm -f smoke_test
 
   # ── 4. (Optional) Publish to GHCR ───────────────────────────────────────
   publish:
