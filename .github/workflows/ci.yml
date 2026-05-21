@@ -73,8 +73,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-
-  # ── 4. (Optional) Publish to GHCR ───────────────────────────────────────
+  # ── 4. Publish to GHCR ───────────────────────────────────────────────────
   publish:
     name: Publish to GHCR
     runs-on: ubuntu-latest
@@ -100,5 +99,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/lab6-app:latest
-            ghcr.io/${{ github.repository_owner }}/lab6-app:${{ github.sha }}
+            ghcr.io/mate021724e/lab6-app:latest
+            ghcr.io/mate021724e/lab6-app:${{ github.sha }}
