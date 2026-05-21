@@ -141,16 +141,6 @@ docker compose --profile test up tests --build
 | `test_get_items` | GET `/items` повертає список |
 | `test_create_item` | POST `/items` створює елемент, повертає 201 |
 
----
-
-## Як перевірити результат
-
-1. **Браузер**: відкрий http://localhost:5000 — побачиш `{"status":"ok",...}`
-2. **Postman**: імпортуй запити з розділу [API Endpoints](#api-endpoints)
-3. **curl**: використовуй команди вище у терміналі
-4. **Логи**: `docker compose logs app` — перевір, що немає помилок
-
----
 
 ## Структура проєкту
 
